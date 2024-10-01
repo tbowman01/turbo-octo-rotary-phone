@@ -1,0 +1,55 @@
+# melange.yaml
+---
+# Define the package metadata
+package:
+  name: "custom-chainguard-image"
+  version: "1.0.0"
+  description: "A customized Chainguard image with additional packages, environment variables, and custom build scripts"
+  license: "Apache-2.0"
+
+# Define the build environment
+environment:
+  arch: "x86_64"
+  os: "linux"
+
+# Define the base image
+base:
+  image: "chainguard/base:latest"
+
+# Define the packages to be added
+packages:
+  - name: "curl"
+    version: "latest"
+  - name: "vim"
+    version: "latest"
+
+# Define the environment variables
+environment_variables:
+  - name: "MY_CUSTOM_VAR"
+    value: "custom_value"
+
+# Define the build steps
+build:
+  steps:
+    - name: "Install additional packages"
+      run: |
+        apk add --no-cache curl vim
+
+    - name: "Set environment variables"
+      run: |
+        echo "export MY_CUSTOM_VAR=test_custom_var" >> /etc/profile
+
+    - name: "Add custom files"
+      run: |
+        mkdir -p /opt/custom
+        cp /scripts/custom-script.sh /opt/custom/custom-script.sh
+        cp /scripts/custom-config.conf /opt/custom/custom-config.conf
+        chmod +x /opt/custom/custom-script.sh
+
+    - name: "Run custom build script"
+      run: |
+        /opt/custom/custom-script.sh
+
+# Define the output image
+output:
+  image: "custom-chainguard-image:1.0.0"
